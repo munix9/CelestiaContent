@@ -79,6 +79,9 @@ Texture maps
    Color and cloud texture extracted from a map on the NASA photojournal, brightness adjusted with the USGS albedo map.
    Normal map derived from USGS DEM.
 
+   Io:
+   Surface texture derived from USGS maps and JVV's map.
+
 # Most of the old maps are from David Seal's site: http://maps.jpl.nasa.gov/.
 
    Some of these maps were modified, with fictional terrain added to fill in
