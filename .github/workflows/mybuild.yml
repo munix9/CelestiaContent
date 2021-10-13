@@ -56,17 +56,17 @@ jobs:
           sed -e 's/\.\(jpg\|png\)/.${type}/g' -i data/*.ssc extras-standard/iss/models/a_iss.cmod \
               extras-standard/interstellar-objects/interstellar-objects.ssc
           cmodfix -b extras-standard/iss/models/a_iss.cmod extras-standard/iss/models/b_iss.cmod
-          rm extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
-          mv extras-standard/iss/models/b_iss.cmod extras-standard/iss/models/iss.cmod
+          rm -v extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
+          mv -v extras-standard/iss/models/b_iss.cmod extras-standard/iss/models/iss.cmod
 
           for dir in extras-standard textures
           do
               for img in $(find "$dir" -type f -name "*.jpg" -o -name "*.png")
               do
                   new="${img%.*}.${type}"
-                  avifenc -j all "$img" "$new" >/dev/null
+                  avifenc -j all "$img" "$new"
                   #convert "$img" -define dds:compression=dxt1 "$new"
-                  rm -- "$img"
+                  rm -v -- "$img"
               done
           done
 
