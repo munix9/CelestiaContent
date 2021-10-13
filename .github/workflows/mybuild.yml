@@ -1,0 +1,68 @@
+
+name: mybuild
+
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  #push:
+  #  branches: [ master ]
+  #pull_request:
+  #  branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["opensuse/tumbleweed"]
+        pkgs: ["gcc gcc-c++"]
+        psrc: [true]
+#        include:
+#          - os: "opensuse/leap:15.3"
+#            pkgs: "gcc10 gcc10-c++"
+#            vars: "CC=gcc-10 CXX=g++-10"
+#            #psrc: true
+
+    container:
+      image: ${{ matrix.os }}
+
+    steps:
+      - name: prep opensuse
+        if: startsWith(matrix.os, 'opensuse')
+        run: |
+          zypper -n ref && zypper -n up
+          zypper -n in ${{ matrix.pkgs }} \
+            cmake git go gtest pcre2-devel pkgconfig \
+            'pkgconfig(fmt)' 'pkgconfig(libbrotlicommon)' 'pkgconfig(liblz4)' \
+            'pkgconfig(libunwind-generic)' 'pkgconfig(libusb-1.0)' \
+            'pkgconfig(libzstd)' 'pkgconfig(protobuf)'
+
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: build & install
+        run: |
+          test -n "${{ matrix.vars }}" && export ${{ matrix.vars }}
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON ..
+          make -O VERBOSE=1 -j && {
+            echo -e "\n### make install ###\n"
+            make install && {
+              if test -n "${{ matrix.psrc }}" ; then
+                echo -e "\n### make package_source ###\n"
+                make package_source
+              fi
+            }
+          }
+      - name: upload package_source
+        uses: actions/upload-artifact@v2
+        if: ${{ success() && matrix.psrc }}
+        with:
+          name: package_source
+          path: ${{ github.workspace }}/build/android-tools-*.tar.xz
