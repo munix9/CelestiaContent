@@ -29,9 +29,9 @@ jobs:
     steps:
       - name: prep
         run: |
-          zypper -n --gpg-auto-import-keys ar https://download.opensuse.org/repositories/home:munix9/openSUSE_Leap_15.3/home:munix9.repo
-          zypper -n --gpg-auto-import-keys ar https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.3/home:munix9:unstable.repo
-          zypper -n ref && zypper -n up
+          zypper -n ar https://download.opensuse.org/repositories/home:munix9/openSUSE_Leap_15.3/home:munix9.repo
+          zypper -n ar https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.3/home:munix9:unstable.repo
+          zypper -n --gpg-auto-import-keys ref && zypper -n up
           zypper -n in avif-tools 'celestia-tools>= 1.7.0~' cmake
 
       - name: checkout
