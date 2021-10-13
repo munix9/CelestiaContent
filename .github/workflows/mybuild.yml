@@ -19,27 +19,18 @@ jobs:
       fail-fast: false
       matrix:
         os: ["opensuse/tumbleweed"]
-        pkgs: ["gcc gcc-c++"]
-        psrc: [true]
 #        include:
 #          - os: "opensuse/leap:15.3"
-#            pkgs: "gcc10 gcc10-c++"
-#            vars: "CC=gcc-10 CXX=g++-10"
-#            #psrc: true
 
     container:
       image: ${{ matrix.os }}
 
     steps:
-      - name: prep opensuse
-        if: startsWith(matrix.os, 'opensuse')
+      - name: prep
         run: |
+          zypper -n ar https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Tumbleweed/home:munix9:unstable.repo
           zypper -n ref && zypper -n up
-          zypper -n in ${{ matrix.pkgs }} \
-            cmake git go gtest pcre2-devel pkgconfig \
-            'pkgconfig(fmt)' 'pkgconfig(libbrotlicommon)' 'pkgconfig(liblz4)' \
-            'pkgconfig(libunwind-generic)' 'pkgconfig(libusb-1.0)' \
-            'pkgconfig(libzstd)' 'pkgconfig(protobuf)'
+          zypper -n in avif-tools celestia-tools cmake
 
       - name: checkout
         uses: actions/checkout@v2
@@ -48,21 +39,20 @@ jobs:
 
       - name: build & install
         run: |
-          test -n "${{ matrix.vars }}" && export ${{ matrix.vars }}
-          mkdir build && cd build
+          mkdir build install && cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON ..
           make -O VERBOSE=1 -j && {
             echo -e "\n### make install ###\n"
-            make install && {
-              if test -n "${{ matrix.psrc }}" ; then
-                echo -e "\n### make package_source ###\n"
-                make package_source
-              fi
-            }
+            make install DESTDIR=../install
           }
-      - name: upload package_source
-        uses: actions/upload-artifact@v2
-        if: ${{ success() && matrix.psrc }}
-        with:
-          name: package_source
-          path: ${{ github.workspace }}/build/android-tools-*.tar.xz
+
+      - name: convert
+        run: |
+          echo "convert"
+
+#      - name: upload package_source
+#        uses: actions/upload-artifact@v2
+#        if: ${{ success() }}
+#        with:
+#          name: package_source
+#          path: ${{ github.workspace }}/build/android-tools-*.tar.xz
