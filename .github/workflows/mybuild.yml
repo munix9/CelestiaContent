@@ -42,7 +42,7 @@ jobs:
       - name: build & install
         run: |
           mkdir build install && cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON ..
+          cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON ..
           make -O VERBOSE=1 -j && {
             echo -e "\n### make install ###\n"
             make install DESTDIR=../install
@@ -50,7 +50,25 @@ jobs:
 
       - name: convert
         run: |
-          echo "convert"
+          type=avif
+          cd install/usr/share/celestia
+          cmodfix -a extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
+          sed -e 's/\.\(jpg\|png\)/.${type}/g' -i data/*.ssc extras-standard/iss/models/a_iss.cmod \
+              extras-standard/interstellar-objects/interstellar-objects.ssc
+          cmodfix -b extras-standard/iss/models/a_iss.cmod extras-standard/iss/models/b_iss.cmod
+          rm extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
+          mv extras-standard/iss/models/b_iss.cmod extras-standard/iss/models/iss.cmod
+
+          for dir in extras-standard textures
+          do
+              for img in $(find "$dir" -type f -name "*.jpg" -o -name "*.png")
+              do
+                  new="${img%.*}.${type}"
+                  avifenc -j all "$img" "$new" >/dev/null
+                  #convert "$img" -define dds:compression=dxt1 "$new"
+                  rm -- "$img"
+              done
+          done
 
 #      - name: upload package_source
 #        uses: actions/upload-artifact@v2
