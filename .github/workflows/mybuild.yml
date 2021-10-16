@@ -47,17 +47,19 @@ jobs:
       - name: build & install
         run: |
           mkdir -p build install/org
-          cd build
+          pushd build
           cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON ..
           make -O VERBOSE=1 -j && {
             echo -e "\n### make install ###\n"
             make install DESTDIR=../install/org
           }
+          popd
 
       - name: convert
         run: |
           for type in avif dds
           do
+            echo -e "\nconvert to '$type' ...\n"
             cp -a install/org install/$type
             pushd install/$type/usr/share/celestia
             cmodfix -a extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
