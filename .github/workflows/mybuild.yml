@@ -18,21 +18,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["opensuse/leap:15.3"]
-#        os: ["opensuse/tumbleweed"]
+        os: ["opensuse/tumbleweed"]
+        repo: ["openSUSE_Tumbleweed"]
 #        include:
 #          - os: "opensuse/leap:15.3"
+#          - repo: "openSUSE_Leap_15.3"
 
     container:
       image: ${{ matrix.os }}
+      # Disable seccomp until a container manager in GitHub recognizes
+      # clone3() syscall,
+      # <https://github.com/actions/virtual-environments/issues/3812>.
+      options: --security-opt seccomp=unconfined
 
     steps:
       - name: prep
         run: |
-          zypper -n ar https://download.opensuse.org/repositories/home:munix9/openSUSE_Leap_15.3/home:munix9.repo
-          zypper -n ar https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.3/home:munix9:unstable.repo
+          zypper -n ar https://download.opensuse.org/repositories/home:munix9/${{ matrix.repo }}/home:munix9.repo
+          zypper -n ar https://download.opensuse.org/repositories/home:munix9:unstable/${{ matrix.repo }}/home:munix9:unstable.repo
           zypper -n --gpg-auto-import-keys ref && zypper -n up
-          zypper -n in avif-tools 'celestia-tools>= 1.7.0~' cmake git
+          zypper -n in ImageMagick avif-tools 'celestia-tools>= 1.7.0~' cmake git
 
       - name: checkout
         uses: actions/checkout@v2
@@ -41,33 +46,38 @@ jobs:
 
       - name: build & install
         run: |
-          mkdir build install && cd build
+          mkdir -p build install/org
+          cd build
           cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON ..
           make -O VERBOSE=1 -j && {
             echo -e "\n### make install ###\n"
-            make install DESTDIR=../install
+            make install DESTDIR=../install/org
           }
 
       - name: convert
         run: |
-          type=avif
-          cd install/usr/share/celestia
-          cmodfix -a extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
-          sed -e 's/\.\(jpg\|png\)/.${type}/g' -i data/*.ssc extras-standard/iss/models/a_iss.cmod \
-              extras-standard/interstellar-objects/interstellar-objects.ssc
-          cmodfix -b extras-standard/iss/models/a_iss.cmod extras-standard/iss/models/b_iss.cmod
-          rm -v extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
-          mv -v extras-standard/iss/models/b_iss.cmod extras-standard/iss/models/iss.cmod
-
-          for dir in extras-standard textures
+          for type in avif dds
           do
+            cp -a install/org install/$type
+            pushd install/$type/usr/share/celestia
+            cmodfix -a extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
+            sed -e 's/\.\(jpg\|png\)/.${type}/g' -i data/*.ssc extras-standard/iss/models/a_iss.cmod \
+              extras-standard/interstellar-objects/interstellar-objects.ssc
+            cmodfix -b extras-standard/iss/models/a_iss.cmod extras-standard/iss/models/b_iss.cmod
+            rm -v extras-standard/iss/models/iss.cmod extras-standard/iss/models/a_iss.cmod
+            mv -v extras-standard/iss/models/b_iss.cmod extras-standard/iss/models/iss.cmod
+
+            for dir in extras-standard textures
+            do
               for img in $(find "$dir" -type f -name "*.jpg" -o -name "*.png")
               do
-                  new="${img%.*}.${type}"
-                  avifenc -j all "$img" "$new"
-                  #convert "$img" -define dds:compression=dxt1 "$new"
-                  rm -v -- "$img"
+                new="${img%.*}.${type}"
+                test "$type" = "avif" && avifenc -j all "$img" "$new"
+                test "$type" = "dds"  && convert -verbose "$img" -define dds:compression=dxt1 "$new"
+                rm -v -- "$img"
               done
+            done
+            popd
           done
 
 #      - name: upload package_source
