@@ -1,6 +1,10 @@
+# SPDX-FileCopyrightText: Celestia Development Team
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 cmake_minimum_required(VERSION 3.8)
 
-project(celestia VERSION "1.7.0" LANGUAGES NONE)
+# set languages to C to stop GNUInstallDirs from complaining
+project(celestia VERSION "1.7.0" LANGUAGES C)
 
 option(ENABLE_NLS     "Enable object names translation? (Default: on)" ON)
 
@@ -35,6 +39,7 @@ add_subdirectory(data)
 add_subdirectory(extras)
 add_subdirectory(extras-standard)
 add_subdirectory(models)
+add_subdirectory(models-extra)
 add_subdirectory(po)
 add_subdirectory(textures)
 add_subdirectory(warp)

@@ -275,7 +275,7 @@
 	#	MeridianAngle	38.3213
 	# }
 
-	LunarLambert	0.5
+	LunarLambert	1
 	GeomAlbedo	0.136
 	BondAlbedo	0.11
 	InfoURL	"https://en.wikipedia.org/wiki/Moon"
@@ -689,6 +689,10 @@ AltSurface "Limit of knowledge" "Sol/Jupiter/Callisto"
 	LunarLambert	0.5
 }
 
+# Masses and densities from Jacobson (2022), AJ 164, 199
+# "The Orbits of the Main Saturnian Satellites,
+# the Saturnian System Gravity Field, and the Orientation of Saturn's Pole"
+# https://ui.adsabs.harvard.edu/abs/2022AJ....164..199J/abstract
 "Saturn" "Sol"
 {
 	Class	"planet"
@@ -696,7 +700,7 @@ AltSurface "Limit of knowledge" "Sol/Jupiter/Callisto"
 	Color	[ 1.0 0.9476 0.81514 ]
 	Radius	60268
 	Oblateness	0.09796
-	Mass	95.16
+	Mass	95.16365876
 	Atmosphere
 	{
 		Height	1000
@@ -740,10 +744,6 @@ AltSurface "Limit of knowledge" "Sol/Jupiter/Callisto"
 	InfoURL	"https://en.wikipedia.org/wiki/Saturn"
 }
 
-# Masses and densities of major moons from Jacobson (2022), AJ 164, 199
-# "The Orbits of the Main Saturnian Satellites,
-# the Saturnian System Gravity Field, and the Orientation of Saturn's Pole"
-# https://ui.adsabs.harvard.edu/abs/2022AJ....164..199J/abstract
 "Mimas:Saturn I" "Sol/Saturn"
 {
 	Class	"moon"
@@ -1167,6 +1167,11 @@ AltSurface "Limit of knowledge" "Sol/Saturn/Hyperion"
 	InfoURL	"https://en.wikipedia.org/wiki/Phoebe_(moon)"
 }
 
+# Masses from Jacobson (2023)
+# "Update of the Orbits of the Regular Uranian Satellites and the Gravitational Field of the Uranian System"
+# https://ui.adsabs.harvard.edu/abs/2023DPS....5522102J/abstract
+# via French et al. (2024), arXiv:2401.04634
+# https://arxiv.org/abs/2401.04634
 "Uranus" "Sol"
 {
 	Class	"planet"
@@ -1174,7 +1179,7 @@ AltSurface "Limit of knowledge" "Sol/Saturn/Hyperion"
 	Color	[ 0.86828 0.97 1.0 ]
 	Radius	25559
 	Oblateness	0.0229
-	Mass	14.54
+	Mass	14.53614488
 	Atmosphere
 	{
 		Height	500
@@ -1229,7 +1234,7 @@ AltSurface "Limit of knowledge" "Sol/Saturn/Hyperion"
 	# NormalMap	"miranda-normal.*"
 	Color	[ 0.98357 0.98913 1.0 ]
 	SemiAxes	[ 240 234.2 232.9 ]
-	Mass	0.0000107880
+	Mass	0.000010537508
 	CustomOrbit	"miranda"
 
 	# Overridden by CustomOrbit
@@ -1279,7 +1284,7 @@ AltSurface "Limit of knowledge" "Sol/Uranus/Miranda"
 	# NormalMap	"ariel-normal.*"
 	Color	[ 1.0 1.0 0.999 ]
 	SemiAxes	[ 581.1 577.9 577.7 ]
-	Mass	0.0002094889
+	Mass	0.000206480241
 	CustomOrbit	"ariel"
 
 	# Overridden by CustomOrbit
@@ -1330,7 +1335,7 @@ AltSurface "Limit of knowledge" "Sol/Uranus/Ariel"
 	# NormalMap	"umbriel-normal.*"
 	Color	[ 1.0 0.99769 0.99749 ]
 	Radius	584.7
-	Mass	0.0002135030
+	Mass	0.000215756865
 	CustomOrbit	"umbriel"
 
 	# Overridden by CustomOrbit
@@ -1381,7 +1386,7 @@ AltSurface "Limit of knowledge" "Sol/Uranus/Umbriel"
 	# NormalMap	"titania-normal.*"
 	Color	[ 1.0 0.98945 0.97393 ]
 	Radius	788.4
-	Mass	0.00056925778
+	Mass	0.000578533155
 	CustomOrbit	"titania"
 
 	# Overridden by CustomOrbit
@@ -1432,7 +1437,7 @@ AltSurface "Limit of knowledge" "Sol/Uranus/Titania"
 	# NormalMap	"oberon-normal.*"
 	Color	[ 1.0 0.98881 0.97178 ]
 	Radius	761.4
-	Mass	0.00051506665
+	Mass	0.000520830543
 	CustomOrbit	"oberon"
 
 	# Overridden by CustomOrbit
@@ -1476,6 +1481,9 @@ AltSurface "Limit of knowledge" "Sol/Uranus/Oberon"
 	LunarLambert	0.5
 }
 
+# Masses from Brozović and Jacobson (2022), AJ 163, 241
+# "Orbits of the Irregular Satellites of Uranus and Neptune"
+# https://ui.adsabs.harvard.edu/abs/2022AJ....163..241B/abstract
 "Neptune" "Sol"
 {
 	Class	"planet"
@@ -1483,7 +1491,7 @@ AltSurface "Limit of knowledge" "Sol/Uranus/Oberon"
 	Color	[ 0.78302 0.91535 1.0 ]
 	Radius	24764
 	Oblateness	0.0171
-	Mass	17.15
+	Mass	17.14823976
 	Atmosphere
 	{
 		Height	500
@@ -1563,9 +1571,6 @@ AltSurface "Limit of knowledge" "Sol/Uranus/Oberon"
 	InfoURL	"https://en.wikipedia.org/wiki/Proteus_(moon)"
 }
 
-# Mass from Brozović and Jacobson (2022), AJ 163, 241
-# "Orbits of the Irregular Satellites of Uranus and Neptune"
-# https://ui.adsabs.harvard.edu/abs/2022AJ....163..241B/abstract
 "Triton:Neptune I" "Sol/Neptune"
 {
 	Class	"moon"
